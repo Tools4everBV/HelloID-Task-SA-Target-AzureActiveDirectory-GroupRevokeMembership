@@ -2,17 +2,17 @@
 ##################################################################
 # Form mapping
 $formObject = @{
-    groupId     = $form.groupId
-    membersToRevoke = $form.membersToRevoke 
+    GroupIdentity   = $form.GroupIdentity
+    membersToRevoke = $form.membersToRevoke
 }
 try {
-    Write-Information "Executing AzureActiveDirectory action: [GroupRevokeMembership] for: [$($formObject.groupId)]"
+    Write-Information "Executing AzureActiveDirectory action: [GroupRevokeMembership] for: [$($formObject.GroupIdentity)]"
     Write-Information "Retrieving Microsoft Graph AccessToken for tenant: [$AADTenantID]"
     $splatTokenParams = @{
         Uri         = "https://login.microsoftonline.com/$($AADTenantID)/oauth2/token"
         ContentType = 'application/x-www-form-urlencoded'
         Method      = 'POST'
-        Body        = @{                                                                                                                         
+        Body        = @{
             grant_type    = 'client_credentials'
             client_id     = $AADAppID
             client_secret = $AADAppSecret
@@ -22,13 +22,13 @@ try {
     $accessToken = (Invoke-RestMethod @splatTokenParams).access_token
 
     $headers = [System.Collections.Generic.Dictionary[string, string]]::new()
-    $headers.Add("Authorization", "Bearer $($accessToken)")
-    $headers.Add("Content-Type", "application/json")
+    $headers.Add('Authorization', "Bearer $($accessToken)")
+    $headers.Add('Content-Type', 'application/json')
 
-    foreach ($member in $formObject.MembersToRevoke){
+    foreach ($member in $formObject.MembersToRevoke) {
         try {
             $splatRevokeMembershipFromGroup = @{
-                Uri         = "https://graph.microsoft.com/v1.0/groups/$($formObject.groupId)/members/$($member.userId)/`$ref"
+                Uri         = "https://graph.microsoft.com/v1.0/groups/$($formObject.GroupIdentity)/members/$($member.UserIdentity)/`$ref"
                 ContentType = 'application/json'
                 Method      = 'DELETE'
                 Headers     = $headers
@@ -39,20 +39,19 @@ try {
             $auditLog = @{
                 Action            = 'UpdateResource'
                 System            = 'AzureActiveDirectory'
-                TargetIdentifier  = $formObject.groupId
-                TargetDisplayName = $formObject.groupId
-                Message           = "AzureActiveDirectory action: [GroupRevokeMembership] from group [$($formObject.groupId)] for: [$($member.userPrincipalName)] executed successfully"
+                TargetIdentifier  = $formObject.GroupIdentity
+                TargetDisplayName = $formObject.GroupIdentity
+                Message           = "AzureActiveDirectory action: [GroupRevokeMembership] from group [$($formObject.GroupIdentity)] for: [$($member.userPrincipalName)] executed successfully"
                 IsError           = $false
             }
-    
+
             Write-Information -Tags 'Audit' -MessageData $auditLog
-            Write-Information "AzureActiveDirectory action: [GroupRevokeMembership] from group [$($formObject.groupId)] for: [$($member.userPrincipalName)] executed successfully"
-        }
-        catch {
+            Write-Information "AzureActiveDirectory action: [GroupRevokeMembership] from group [$($formObject.GroupIdentity)] for: [$($member.userPrincipalName)] executed successfully"
+        } catch {
             $ex = $_
             if (-not[string]::IsNullOrEmpty($ex.ErrorDetails)) {
                 $errorExceptionDetails = ($_.ErrorDetails | ConvertFrom-Json).error.Message
-            }else {
+            } else {
                 $errorExceptionDetails = $ex.Exception.Message
             }
 
@@ -61,46 +60,45 @@ try {
                 $auditLog = @{
                     Action            = 'UpdateResource'
                     System            = 'AzureActiveDirectory'
-                    TargetIdentifier  = $formObject.groupId
-                    TargetDisplayName = $formObject.groupId
-                    Message           = "AzureActiveDirectory action: [GroupRevokeMembership from group [$($formObject.groupId))] ] for: [$($member.userPrincipalName)] executed successfully. Note that the account was not a member"
+                    TargetIdentifier  = $formObject.GroupIdentity
+                    TargetDisplayName = $formObject.GroupIdentity
+                    Message           = "AzureActiveDirectory action: [GroupRevokeMembership from group [$($formObject.GroupIdentity))] ] for: [$($member.userPrincipalName)] executed successfully. Note that the account was not a member"
                     IsError           = $false
                 }
                 Write-Information -Tags 'Audit' -MessageData $auditLog
-                Write-Information "AzureActiveDirectory action: [GroupRevokeMembership from group [$($formObject.groupId))] ] for: [$($member.userPrincipalName)] executed successfully.  Note that the account was not a member"
-            }else{
+                Write-Information "AzureActiveDirectory action: [GroupRevokeMembership from group [$($formObject.GroupIdentity))] ] for: [$($member.userPrincipalName)] executed successfully.  Note that the account was not a member"
+            } else {
                 $auditLog = @{
                     Action            = 'UpdateResource'
                     System            = 'AzureActiveDirectory'
-                    TargetIdentifier  = $formObject.groupId
-                    TargetDisplayName = $formObject.groupId
-                    Message           = "Could not execute AzureActiveDirectory action: [GroupRevokeMembership] from group [$($formObject.groupId)] for: [$($member.userPrincipalName)], error: $($errorExceptionDetails)"
+                    TargetIdentifier  = $formObject.GroupIdentity
+                    TargetDisplayName = $formObject.GroupIdentity
+                    Message           = "Could not execute AzureActiveDirectory action: [GroupRevokeMembership] from group [$($formObject.GroupIdentity)] for: [$($member.userPrincipalName)], error: $($errorExceptionDetails)"
                     IsError           = $true
                 }
-                Write-Information -Tags "Audit" -MessageData $auditLog
-                Write-Error "Could not execute AzureActiveDirectory action: [GroupRevokeMembership] from group [$($formObject.groupId)] for: [$($member.userPrincipalName)], error: $($errorExceptionDetails)"
-            }           
+                Write-Information -Tags 'Audit' -MessageData $auditLog
+                Write-Error "Could not execute AzureActiveDirectory action: [GroupRevokeMembership] from group [$($formObject.GroupIdentity)] for: [$($member.userPrincipalName)], error: $($errorExceptionDetails)"
+            }
         }
     }
-}
-catch {
+} catch {
     $ex = $_
     if (-not[string]::IsNullOrEmpty($ex.ErrorDetails)) {
         $errorExceptionDetails = ($_.ErrorDetails | ConvertFrom-Json).error.Message
-    }else {
+    } else {
         $errorExceptionDetails = $ex.Exception.Message
     }
 
     $auditLog = @{
         Action            = 'UpdateResource'
         System            = 'AzureActiveDirectory'
-        TargetIdentifier  = $formObject.groupId 
-        TargetDisplayName = $formObject.groupId
-        Message           = "Could not execute AzureActiveDirectory action: [GroupRevokeMembership] for group: [$($formObject.groupId)], error: $($errorExceptionDetails)"
+        TargetIdentifier  = $formObject.GroupIdentity
+        TargetDisplayName = $formObject.GroupIdentity
+        Message           = "Could not execute AzureActiveDirectory action: [GroupRevokeMembership] for group: [$($formObject.GroupIdentity)], error: $($errorExceptionDetails)"
         IsError           = $true
     }
 
     Write-Information -Tags "Audit" -MessageData $auditLog
-    Write-Error "Could not execute AzureActiveDirectory action: [GroupRevokeMembership] from group [$($formObject.groupId)] for: [$($owner.userPrincipalName)], error: $($errorExceptionDetails)"
+    Write-Error "Could not execute AzureActiveDirectory action: [GroupRevokeMembership] from group [$($formObject.GroupIdentity)] for: [$($owner.userPrincipalName)], error: $($errorExceptionDetails)"
 }
 ##################################################################

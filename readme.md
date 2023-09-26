@@ -13,25 +13,24 @@ Before using this snippet, verify you've met with the following requirements:
 
 This code snippet executes the following tasks:
 
-1. Define a hash table `$formObject`. The keys of the hash table represent the properties to revoke a membership from a group, while the values represent the values entered in the form.
+1. Define a hash table `$formObject`. The keys of the hash table represent the properties to revoke a membership from a group, while the values represent the values entered in the form. [See the Microsoft Docs page](https://learn.microsoft.com/en-us/graph/api/group-delete-members?view=graph-rest-1.0&tabs=http)
 
 > To view an example of the form output, please refer to the JSON code pasted below.
 
 ```json
 {
-    "groupId": "groupId",
+    "GroupIdentity": "43539ed2-85df-4c3a-9b5a-c03ed1e605bb",
     "MembersToRevoke": [
         {
-            "userId": "userId1",
+            "UserIdentity": "userId1",
             "userPrincipalName": "testuser1@mydomain.local"
 
         },
         {
-            "userId": "userId2",
+            "UserIdentity": "userId2",
             "userPrincipalName": "testuser2@mydomain.local"
         }
     ]
-    
 }
 ```
 
@@ -39,4 +38,4 @@ This code snippet executes the following tasks:
 
 2. Receive a bearer token by making a POST request to: `https://login.microsoftonline.com/$AADTenantID/oauth2/token`, where `$AADTenantID` is the ID of your Azure Active Directory tenant.
 
-3. revoke the membership from a group using the: `Invoke-RestMethod` cmdlet. The hash table called: `$formObject` is passed to the body of the: `Invoke-RestMethod` cmdlet as a JSON object.
+3. Revoke the membership from a group using the: `Invoke-RestMethod` cmdlet. The hash table called: `$formObject` is passed to the body of the: `Invoke-RestMethod` cmdlet as a JSON object.
