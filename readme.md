@@ -13,7 +13,7 @@ Before using this snippet, verify you've met with the following requirements:
 
 This code snippet executes the following tasks:
 
-1. Define a hash table `$formObject`. The keys of the hash table represent the properties to revoke a membership from a group, while the values represent the values entered in the form. [See the Microsoft Docs page](https://learn.microsoft.com/en-us/graph/api/group-delete-members?view=graph-rest-1.0&tabs=http)
+1. Define a hash table `$formObject`. The keys of the hash table represent the properties to revoke a membership from a group, while the values represent the values entered in the form. 
 
 > To view an example of the form output, please refer to the JSON code pasted below.
 
@@ -35,6 +35,7 @@ This code snippet executes the following tasks:
 ```
 
 > :exclamation: It is important to note that the names of your form fields might differ. Ensure that the `$formObject` hashtable is appropriately adjusted to match your form fields.
+> [See the Microsoft Docs page](https://learn.microsoft.com/en-us/graph/api/group-delete-members?view=graph-rest-1.0&tabs=http)
 
 2. Receive a bearer token by making a POST request to: `https://login.microsoftonline.com/$AADTenantID/oauth2/token`, where `$AADTenantID` is the ID of your Azure Active Directory tenant.
 
