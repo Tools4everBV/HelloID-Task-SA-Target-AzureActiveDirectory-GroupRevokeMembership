@@ -28,7 +28,7 @@ try {
     foreach ($member in $formObject.MembersToRevoke) {
         try {
             $splatRevokeMembershipFromGroup = @{
-                Uri         = "https://graph.microsoft.com/v1.0/groups/$($formObject.GroupIdentity)/members/$($member.UserIdentity)/`$ref"
+                Uri         = "https://graph.microsoft.com/v1.0/groups/$($formObject.GroupIdentity)/members/$($member.UserId)/`$ref"
                 ContentType = 'application/json'
                 Method      = 'DELETE'
                 Headers     = $headers

@@ -22,12 +22,12 @@ This code snippet executes the following tasks:
     "GroupIdentity": "43539ed2-85df-4c3a-9b5a-c03ed1e605bb",
     "MembersToRevoke": [
         {
-            "UserIdentity": "userId1",
+            "UserId": "userId1",
             "userPrincipalName": "testuser1@mydomain.local"
 
         },
         {
-            "UserIdentity": "userId2",
+            "UserId": "userId2",
             "userPrincipalName": "testuser2@mydomain.local"
         }
     ]
