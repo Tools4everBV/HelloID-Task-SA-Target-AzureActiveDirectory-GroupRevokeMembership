@@ -31,8 +31,7 @@ try {
                 Uri         = "https://graph.microsoft.com/v1.0/groups/$($formObject.GroupIdentity)/members/$($member.UserId)/`$ref"
                 ContentType = 'application/json'
                 Method      = 'DELETE'
-                Headers     = $headers
-                Body        = @{ '@odata.id' = "https://graph.microsoft.com/v1.0/users/$($member.userPrincipalName)" } | ConvertTo-Json -Depth 10
+                Headers     = $headers                
             }
             $null = Invoke-RestMethod @splatRevokeMembershipFromGroup
 
